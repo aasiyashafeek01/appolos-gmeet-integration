@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Meet Manager</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            background: white;
+            padding: 50px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .hero h1 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 34px;
+        }
+
+        .hero p {
+            color: #6b7280;
+            font-size: 17px;
+            margin-bottom: 35px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .action-card {
+            width: 260px;
+            padding: 25px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #1f2937;
+            background: #ffffff;
+            transition: 0.2s;
+        }
+
+        .action-card:hover {
+            border-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .action-card h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        .action-card p {
+            margin: 0;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .primary p {
+            color: #dbeafe;
+        }
+
+        .primary:hover {
+            background: #1d4ed8;
+            border-color: #1d4ed8;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin-top: 30px;
+            }
+
+            .hero {
+                padding: 30px 20px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .action-card {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="hero">
+
+        <h1>Google Meet Manager</h1>
+
+        <p>
+            Create, schedule and manage your Google Meet meetings
+            using Google Calendar.
+        </p>
+
+        <div class="actions">
+
+            <!-- Create Meeting -->
+            <a
+                href="{% url 'google-authorize' %}?next=create-meeting"
+                class="action-card primary"
+            >
+                <h2>Create a Meeting</h2>
+
+                <p>
+                    Schedule a new Google Meet and add a participant.
+                </p>
+            </a>
+
+            <!-- Meeting List -->
+            <a
+                href="{% url 'google-authorize' %}?next=meeting-list"
+                class="action-card"
+            >
+                <h2>My Meetings</h2>
+
+                <p>
+                    View your existing meetings and join them.
+                </p>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Meeting Created</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 18px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #374151;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+
+        .success-card {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            background: #dcfce7;
+            color: #16a34a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .meeting-details {
+            text-align: left;
+            background: #f9fafb;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .detail {
+            margin-bottom: 18px;
+        }
+
+        .detail:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+        }
+
+        .participant-list {
+            margin: 8px 0 0;
+            padding-left: 20px;
+        }
+
+        .participant-list li {
+            margin-bottom: 6px;
+        }
+
+        .no-participants {
+            color: #6b7280;
+        }
+
+        .meet-button {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: #16a34a;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .meet-button:hover {
+            background: #15803d;
+        }
+
+        .secondary-button {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .secondary-button:hover {
+            background: #1d4ed8;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            color: #2563eb;
+        }
+
+        .meet-link-section {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .link-box {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .link-box input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 14px;
+            background: #f9fafb;
+        }
+
+        .link-box button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 7px;
+            background: #374151;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .link-box button:hover {
+            background: #1f2937;
+        }
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 18px 20px;
+            }
+
+            .nav-links a {
+                margin-left: 10px;
+            }
+
+            .success-card {
+                padding: 25px;
+            }
+
+            .link-box {
+                flex-direction: column;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        Google Meet Manager
+    </div>
+
+    <div class="nav-links">
+        <a href="{% url 'home' %}">
+            Dashboard
+        </a>
+
+        <a href="{% url 'meeting-list' %}">
+            My Meetings
+        </a>
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="success-card">
+
+        <div class="success-icon">
+            ✓
+        </div>
+
+        <h1>
+            Meeting Created Successfully!
+        </h1>
+
+        <p class="subtitle">
+            Your Google Calendar event and Google Meet have been created.
+        </p>
+
+
+        <div class="meeting-details">
+
+            <!-- Meeting Title -->
+
+            <div class="detail">
+
+                <span class="detail-label">
+                    Meeting Title
+                </span>
+
+                <span class="detail-value">
+                    {{ meeting.meeting_title }}
+                </span>
+
+            </div>
+
+
+            <!-- Start -->
+
+            <div class="detail">
+
+                <span class="detail-label">
+                    Start
+                </span>
+
+                <span class="detail-value">
+                    {{ meeting.start_time }}
+                </span>
+
+            </div>
+
+
+            <!-- End -->
+
+            <div class="detail">
+
+                <span class="detail-label">
+                    End
+                </span>
+
+                <span class="detail-value">
+                    {{ meeting.end_time }}
+                </span>
+
+            </div>
+
+
+            <!-- Duration -->
+
+            <div class="detail">
+
+                <span class="detail-label">
+                    Duration
+                </span>
+
+                <span class="detail-value">
+                    {{ meeting.duration }}
+                </span>
+
+            </div>
+
+
+            <!-- INVITED PARTICIPANTS -->
+
+            <div class="detail">
+
+                <span class="detail-label">
+                    Invited Participants
+                </span>
+
+                {% if meeting.invited_participants.exists %}
+
+                    <ul class="participant-list">
+
+                        {% for participant in meeting.invited_participants.all %}
+
+                            <li>
+                                {{ participant.email }}
+                            </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                {% else %}
+
+                    <span class="detail-value no-participants">
+                        No participants invited.
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- GOOGLE MEET LINK -->
+
+        <div class="meet-link-section">
+
+            <span class="detail-label">
+                Google Meet Link
+            </span>
+
+            <div class="link-box">
+
+                <input
+                    type="text"
+                    id="meetLink"
+                    value="{{ meeting.gmeet_link }}"
+                    readonly
+                >
+
+                <button
+                    type="button"
+                    onclick="copyMeetLink()"
+                >
+                    Copy Link
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- JOIN MEETING -->
+
+        <a
+            href="{{ meeting.gmeet_link }}"
+            target="_blank"
+            class="meet-button"
+        >
+            Join Google Meet
+        </a>
+
+
+        <!-- CREATE ANOTHER -->
+
+        <a
+            href="{% url 'create-meeting' %}"
+            class="secondary-button"
+        >
+            Create Another Meeting
+        </a>
+
+
+        <!-- VIEW MEETINGS -->
+
+        <a
+            href="{% url 'meeting-list' %}"
+            class="back-link"
+        >
+            View My Meetings
+        </a>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function copyMeetLink() {
+
+    const meetLink =
+        document.getElementById("meetLink");
+
+    navigator.clipboard.writeText(
+        meetLink.value
+    )
+
+    .then(function () {
+
+        alert(
+            "Google Meet link copied!"
+        );
+
+    })
+
+    .catch(function () {
+
+        alert(
+            "Unable to copy the link."
+        );
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>

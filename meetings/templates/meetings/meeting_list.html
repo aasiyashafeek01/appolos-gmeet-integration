@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>My Meetings</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 18px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #374151;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 6px 0;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .create-button {
+            text-decoration: none;
+            background: #2563eb;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 7px;
+            font-weight: 600;
+        }
+
+        .create-button:hover {
+            background: #1d4ed8;
+        }
+
+        .meetings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 22px;
+        }
+
+        .meeting-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .meeting-card h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .meeting-info {
+            margin-bottom: 12px;
+        }
+
+        .meeting-info strong {
+            display: block;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .meeting-info span {
+            font-size: 15px;
+        }
+
+        /* =========================
+           MEETING ACTIONS
+           ========================= */
+
+        .meeting-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 22px;
+        }
+
+        .meeting-actions a,
+        .meeting-actions button {
+            flex: 1;
+            padding: 11px 8px;
+            border: none;
+            border-radius: 7px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .join-button {
+            background: #16a34a;
+            color: white;
+        }
+
+        .join-button:hover {
+            background: #15803d;
+        }
+
+        .copy-button {
+            background: #374151;
+            color: white;
+        }
+
+        .copy-button:hover {
+            background: #1f2937;
+        }
+
+        /* =========================
+           RECORDING
+           ========================= */
+
+        .recording-section {
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .recording-label {
+            display: block;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .recording-button {
+            display: block;
+            width: 100%;
+            padding: 10px 12px;
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            border-radius: 7px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .recording-button:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+
+        .no-recording {
+            margin: 0;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        /* =========================
+           ATTENDANCE BUTTON
+           ========================= */
+
+        .attendance-button {
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+            padding: 11px 12px;
+            background: #fffaf0;
+            color: #7a5c00;
+            border: 1px solid #f1dfaa;
+            border-radius: 7px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .attendance-button:hover {
+            background: #fff4d6;
+            border-color: #e8cf8a;
+        }
+
+        /* =========================
+           EMPTY STATE
+           ========================= */
+
+        .empty-state {
+            background: white;
+            padding: 50px 30px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .empty-state p {
+            color: #6b7280;
+            margin-bottom: 25px;
+        }
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 18px 20px;
+            }
+
+            .nav-links a {
+                margin-left: 10px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 18px;
+            }
+
+            .meeting-actions {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        Google Meet Manager
+    </div>
+
+    <div class="nav-links">
+
+        <a href="{% url 'home' %}">
+            Dashboard
+        </a>
+
+        <a href="{% url 'meeting-list' %}">
+            My Meetings
+        </a>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+                My Meetings
+            </h1>
+
+        </div>
+
+        <a
+            href="{% url 'create-meeting' %}"
+            class="create-button"
+        >
+            + Create Meeting
+        </a>
+
+    </div>
+
+
+    {% if meetings %}
+
+        <div class="meetings-grid">
+
+            {% for meeting in meetings %}
+
+                <div class="meeting-card">
+
+                    <!-- =========================
+                         MEETING / CALENDAR DETAILS
+                         ========================= -->
+
+                    <h2>
+                        {{ meeting.meeting_title }}
+                    </h2>
+
+
+                    <div class="meeting-info">
+
+                        <strong>
+                            Start
+                        </strong>
+
+                        <span>
+                            {{ meeting.start_time }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="meeting-info">
+
+                        <strong>
+                            End
+                        </strong>
+
+                        <span>
+                            {{ meeting.end_time }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="meeting-info">
+
+                        <strong>
+                            Scheduled Duration
+                        </strong>
+
+                        <span>
+                            {{ meeting.duration }}
+                        </span>
+
+                    </div>
+
+
+                    <!-- =========================
+                         JOIN / COPY ACTIONS
+                         ========================= -->
+
+                    <div class="meeting-actions">
+
+                        <a
+                            href="{{ meeting.gmeet_link }}"
+                            target="_blank"
+                            class="join-button"
+                        >
+                            Join
+                        </a>
+
+
+                        <button
+                            type="button"
+                            class="copy-button"
+                            onclick="copyMeetLink(
+                                '{{ meeting.gmeet_link|escapejs }}',
+                                this
+                            )"
+                        >
+                            Copy Link
+                        </button>
+
+                    </div>
+
+
+                    <!-- =========================
+                         RECORDING
+                         ========================= -->
+
+                    <div class="recording-section">
+
+                        <span class="recording-label">
+                            Recording
+                        </span>
+
+
+                        {% if meeting.recording_url %}
+
+                            <a
+                                href="{{ meeting.recording_url }}"
+                                target="_blank"
+                                class="recording-button"
+                            >
+                                ▶ View Recording
+                            </a>
+
+                        {% else %}
+
+                            <p class="no-recording">
+                                No recording available
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- =========================
+                         ATTENDANCE / PARTICIPANTS
+                         ========================= -->
+
+                    <a
+                        href="{% url 'meeting-attendance' meeting.id %}"
+                        class="attendance-button"
+                    >
+                        View Attendance
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+    {% else %}
+
+        <div class="empty-state">
+
+            <h2>
+                No Meetings Yet
+            </h2>
+
+            <p>
+                You haven't created any meetings yet.
+            </p>
+
+            <a
+                href="{% url 'create-meeting' %}"
+                class="create-button"
+            >
+                Create Your First Meeting
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+function copyMeetLink(link, button) {
+
+    navigator.clipboard.writeText(link)
+
+        .then(function () {
+
+            const originalText = button.innerText;
+
+            button.innerText = "Copied!";
+
+            setTimeout(function () {
+
+                button.innerText = originalText;
+
+            }, 1500);
+
+        })
+
+        .catch(function () {
+
+            alert("Unable to copy the link.");
+
+        });
+
+}
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Meeting & Participant Details</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            background: #ffffff;
+            padding: 18px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #374151;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 45px auto;
+            padding: 0 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 25px;
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            margin: 0 0 8px;
+        }
+
+        .page-header p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .sync-button {
+            display: inline-block;
+            margin-top: 18px;
+            padding: 11px 18px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .sync-button:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* =========================
+           SECTION
+           ========================= */
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            margin: 0 0 15px;
+            font-size: 20px;
+        }
+
+
+        /* =========================
+           MEETING DETAILS
+           ========================= */
+
+        .meeting-details-card {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .meeting-info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .info-item {
+            background: #fffdf5;
+            border: 1px solid #d6ceb0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .info-item strong {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .info-item span {
+            font-size: 14px;
+        }
+
+        .actual-duration {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .actual-duration strong {
+            color: #166534;
+        }
+
+        .actual-duration span {
+            font-weight: 600;
+            color: #166534;
+        }
+
+
+        /* =========================
+           INVITED PARTICIPANTS
+           ========================= */
+
+        .invited-card {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 20px 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .participant-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .participant-list li {
+            margin-bottom: 8px;
+        }
+
+        .participant-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .no-participants {
+            margin: 0;
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           JOINED PARTICIPANT CARD
+           ========================= */
+
+        .participant-card {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .participant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 22px;
+        }
+
+        .participant-name {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .details-button {
+            background: #fffdf5;
+            color: #5f5a45;
+            border: 1px solid #c9bd8a;
+            border-radius: 6px;
+            padding: 8px 13px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .details-button:hover {
+            background: #faf7e9;
+        }
+
+
+        /* =========================
+           PARTICIPANT DETAILS
+           ========================= */
+
+        .participant-content {
+            padding: 20px 22px 22px;
+            border-top: 1px solid #cbd5e1;
+        }
+
+        .participant-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+
+        /* =========================
+           SESSIONS
+           ========================= */
+
+        .sessions-details {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #fffdf5;
+            overflow: hidden;
+        }
+
+        .sessions-summary {
+            padding: 13px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #5f5a45;
+            list-style: none;
+        }
+
+        .sessions-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .sessions-summary::before {
+            content: "▶";
+            display: inline-block;
+            margin-right: 9px;
+            font-size: 9px;
+            transition: transform 0.2s ease;
+        }
+
+        .sessions-details[open] .sessions-summary::before {
+            transform: rotate(90deg);
+        }
+
+        .sessions-summary:hover {
+            background: #faf7e9;
+        }
+
+        .sessions-content {
+            padding: 5px 15px 15px;
+            border-top: 1px solid #cbd5e1;
+        }
+
+        .session {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        .session-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .session-item {
+            flex: 1;
+        }
+
+        .session-item strong {
+            display: block;
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .session-item span {
+            font-size: 14px;
+        }
+
+        .empty-session {
+            padding: 12px 0 5px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           EMPTY STATE
+           ========================= */
+
+        .empty-state {
+            background: white;
+            padding: 40px 30px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+        }
+
+        .empty-state p {
+            color: #6b7280;
+        }
+
+
+        /* =========================
+           MOBILE
+           ========================= */
+
+        @media (max-width: 700px) {
+
+            .navbar {
+                padding: 18px 20px;
+            }
+
+            .nav-links a {
+                margin-left: 10px;
+            }
+
+            .meeting-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .participant-info {
+                grid-template-columns: 1fr;
+            }
+
+            .session-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .participant-header {
+                gap: 15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        Google Meet Manager
+    </div>
+
+    <div class="nav-links">
+
+        <a href="{% url 'home' %}">
+            Dashboard
+        </a>
+
+        <a href="{% url 'meeting-list' %}">
+            My Meetings
+        </a>
+
+    </div>
+
+</nav>
+
+
+<div class="container">
+
+    <a
+        href="{% url 'meeting-list' %}"
+        class="back-link"
+    >
+        ← Back to Meetings
+    </a>
+
+
+    <div class="page-header">
+
+        <h1>
+            Meeting Details
+        </h1>
+
+        <p>
+            Attendance and session information for
+            <strong>{{ meeting.meeting_title }}</strong>
+        </p>
+
+        <a
+            href="{% url 'sync-attendance' meeting.id %}"
+            class="sync-button"
+        >
+            Sync Attendance
+        </a>
+
+    </div>
+
+
+    <!-- =========================================
+         MEETING DETAILS
+         ========================================= -->
+
+    <div class="section">
+
+        <h2 class="section-title">
+            Meeting Information
+        </h2>
+
+        <div class="meeting-details-card">
+
+            <div class="meeting-info-grid">
+
+                <!-- Scheduled Start -->
+
+                <div class="info-item">
+
+                    <strong>
+                        Scheduled Start
+                    </strong>
+
+                    <span>
+                        {{ meeting.start_time|default:"Not available" }}
+                    </span>
+
+                </div>
+
+
+                <!-- Scheduled End -->
+
+                <div class="info-item">
+
+                    <strong>
+                        Scheduled End
+                    </strong>
+
+                    <span>
+                        {{ meeting.end_time|default:"Not available" }}
+                    </span>
+
+                </div>
+
+
+                <!-- Scheduled Duration -->
+
+                <div class="info-item">
+
+                    <strong>
+                        Scheduled Duration
+                    </strong>
+
+                    <span>
+                        {{ meeting.duration|default:"Not available" }}
+                    </span>
+
+                </div>
+
+
+                <!-- Actual Meet Start -->
+
+                <div class="info-item">
+
+                    <strong>
+                        Actual Meet Start
+                    </strong>
+
+                    <span>
+                        {{ meeting.actual_start_time|default:"Not available" }}
+                    </span>
+
+                </div>
+
+
+                <!-- Actual Meet End -->
+
+                <div class="info-item">
+
+                    <strong>
+                        Actual Meet End
+                    </strong>
+
+                    <span>
+                        {{ meeting.actual_end_time|default:"Not available" }}
+                    </span>
+
+                </div>
+
+
+                <!-- Actual Meet Duration -->
+
+                <div class="info-item actual-duration">
+
+                    <strong>
+                        Actual Meet Duration
+                    </strong>
+
+                    <span>
+                        {{ meeting.actual_duration|default:"Not available" }}
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         INVITED PARTICIPANTS
+         ========================================= -->
+
+    <div class="section">
+
+        <h2 class="section-title">
+            Invited Participants
+        </h2>
+
+        <div class="invited-card">
+
+            {% if invited_participants %}
+
+                <ul class="participant-list">
+
+                    {% for participant in invited_participants %}
+
+                        <li>
+                            {{ participant.email }}
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% else %}
+
+                <p class="no-participants">
+                    No participants were invited to this meeting.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================
+         JOINED PARTICIPANTS
+         ========================================= -->
+
+    <div class="section">
+
+        <h2 class="section-title">
+            Joined Participants
+        </h2>
+
+
+        {% if joined_participants %}
+
+            {% for participant in joined_participants %}
+
+                <div class="participant-card">
+
+                    <!-- Participant email -->
+
+                    <div class="participant-header">
+
+                         <h3 class="participant-name">
+                            {{ participant.participant_name|default:"Unknown Participant" }}
+                        </h3>
+
+                        <div class="participant-email">
+                            {{ participant.participant_email|default:"Email not available" }}
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="details-button"
+                            onclick="toggleParticipant(this)"
+                        >
+                            View Details
+                        </button>
+
+                    </div>
+
+
+                    <!-- Hidden details -->
+
+                    <div
+                        class="participant-content"
+                        style="display: none;"
+                    >
+
+                        <div class="participant-info">
+
+
+                            <!-- First Joined -->
+
+                            <div class="info-item">
+
+                                <strong>
+                                    First Joined
+                                </strong>
+
+                                <span>
+                                    {{ participant.first_joined|default:"Not available" }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- Last Left -->
+
+                            <div class="info-item">
+
+                                <strong>
+                                    Last Left
+                                </strong>
+
+                                <span>
+                                    {{ participant.last_left|default:"Not available" }}
+                                </span>
+
+                            </div>
+
+
+                            <!-- Total Duration -->
+
+                            <div class="info-item">
+
+                                <strong>
+                                    Total Duration
+                                </strong>
+
+                                <span>
+                                    {{ participant.total_duration|default:"Not available" }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Sessions -->
+
+                        <details class="sessions-details">
+
+                            <summary class="sessions-summary">
+                                Sessions
+                            </summary>
+
+
+                            <div class="sessions-content">
+
+                                {% if participant.sessions.all %}
+
+                                    {% for session in participant.sessions.all %}
+
+                                        <div class="session">
+
+                                            <div class="session-row">
+
+
+                                                <div class="session-item">
+
+                                                    <strong>
+                                                        Joined
+                                                    </strong>
+
+                                                    <span>
+                                                        {{ session.joined_at }}
+                                                    </span>
+
+                                                </div>
+
+
+                                                <div class="session-item">
+
+                                                    <strong>
+                                                        Left
+                                                    </strong>
+
+                                                    <span>
+                                                        {{ session.left_at|default:"Still active" }}
+                                                    </span>
+
+                                                </div>
+
+
+                                                <div class="session-item">
+
+                                                    <strong>
+                                                        Duration
+                                                    </strong>
+
+                                                    <span>
+                                                        {{ session.duration|default:"Not available" }}
+                                                    </span>
+
+                                                </div>
+
+
+                                            </div>
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                {% else %}
+
+                                    <p class="empty-session">
+                                        No session information available.
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+                        </details>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+
+        {% else %}
+
+            <div class="empty-state">
+
+                <h2>
+                    No Joined Participants Yet
+                </h2>
+
+                <p>
+                    Attendance information has not been synchronized
+                    for this meeting yet.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+
+function toggleParticipant(button) {
+
+    const card =
+        button.closest(".participant-card");
+
+    const content =
+        card.querySelector(".participant-content");
+
+
+    if (content.style.display === "none") {
+
+        content.style.display = "block";
+
+        button.innerText = "Hide Details";
+
+    } else {
+
+        content.style.display = "none";
+
+        button.innerText = "View Details";
+
+    }
+
+}
+
+</script>
+
+
+</body>
+</html>
