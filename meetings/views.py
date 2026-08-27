@@ -3,29 +3,49 @@ import secrets
 
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils.dateparse import parse_datetime
 from django.utils import timezone
+
+from django.http import (
+    HttpResponse,
+    JsonResponse,
+)
 
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
 from .calendar_api import get_calendar_service
-from .models import Meeting, GoogleCredentials, MeetingParticipant
+from .models import (
+    Meeting,
+    GoogleCredentials,
+    MeetingParticipant,
+    Conference,
+)
 from .google_api import get_google_flow
 from .meet_api import (
     get_meeting_recording,
     sync_meeting_attendance,
+    set_auto_recording,
+    get_meeting_space,
 )
 
 
+# =========================================================
+# HOME
+# =========================================================
+
 def home(request):
+
     return render(
         request,
         "meetings/home.html"
     )
 
+
+# =========================================================
+# GOOGLE AUTHORIZATION
+# =========================================================
 
 def google_authorize(request):
 
@@ -53,13 +73,23 @@ def google_authorize(request):
     return redirect(authorization_url)
 
 
+# =========================================================
+# GOOGLE OAUTH CALLBACK
+# =========================================================
+
 def google_oauth_callback(request):
 
     state = request.GET.get("state")
     code = request.GET.get("code")
 
-    saved_state = request.session.get("oauth_state")
-    code_verifier = request.session.get("code_verifier")
+    saved_state = request.session.get(
+        "oauth_state"
+    )
+
+    code_verifier = request.session.get(
+        "code_verifier"
+    )
+
     next_page = request.session.get(
         "oauth_next",
         "home"
@@ -73,18 +103,21 @@ def google_oauth_callback(request):
     # ---------------------------------------------
 
     if not state:
+
         return HttpResponse(
             "Google did not return OAuth state.",
             status=400
         )
 
     if not code:
+
         return HttpResponse(
             "Google did not return an authorization code.",
             status=400
         )
 
     if not saved_state:
+
         return HttpResponse(
             "OAuth state is missing from Django session. "
             "Start the login process again.",
@@ -92,6 +125,7 @@ def google_oauth_callback(request):
         )
 
     if not code_verifier:
+
         return HttpResponse(
             "PKCE code verifier is missing from Django session. "
             "Start the login process again.",
@@ -99,13 +133,14 @@ def google_oauth_callback(request):
         )
 
     if state != saved_state:
+
         return HttpResponse(
             "OAuth state mismatch. Start the login process again.",
             status=400
         )
 
     # ---------------------------------------------
-    # Exchange authorization code for credentials
+    # Exchange authorization code
     # ---------------------------------------------
 
     flow = get_google_flow(
@@ -122,10 +157,11 @@ def google_oauth_callback(request):
     credentials = flow.credentials
 
     # ---------------------------------------------
-    # Identify the Google account
+    # Identify Google account
     # ---------------------------------------------
 
     if not credentials.id_token:
+
         return HttpResponse(
             "Google did not return an identity token.",
             status=400
@@ -145,13 +181,17 @@ def google_oauth_callback(request):
             status=400
         )
 
-    google_email = google_user_info.get("email")
+    google_email = google_user_info.get(
+        "email"
+    )
+
     google_name = google_user_info.get(
         "name",
         google_email
     )
 
     if not google_email:
+
         return HttpResponse(
             "Google account email was not available.",
             status=400
@@ -178,13 +218,16 @@ def google_oauth_callback(request):
     user.save()
 
     # ---------------------------------------------
-    # Log this user into Django
+    # Log user into Django
     # ---------------------------------------------
 
-    login(request, user)
+    login(
+        request,
+        user
+    )
 
     # ---------------------------------------------
-    # Save Google credentials for THIS user
+    # Save Google credentials
     # ---------------------------------------------
 
     GoogleCredentials.objects.update_or_create(
@@ -197,7 +240,7 @@ def google_oauth_callback(request):
     )
 
     # ---------------------------------------------
-    # Clean OAuth session values
+    # Clean OAuth session
     # ---------------------------------------------
 
     request.session.pop(
@@ -218,6 +261,10 @@ def google_oauth_callback(request):
     return redirect(next_page)
 
 
+# =========================================================
+# CREATE MEETING
+# =========================================================
+
 def create_meeting(request):
 
     # ---------------------------------------------
@@ -231,7 +278,7 @@ def create_meeting(request):
         )
 
     # ---------------------------------------------
-    # Make sure THIS user has Google credentials
+    # Make sure this user has Google credentials
     # ---------------------------------------------
 
     if not GoogleCredentials.objects.filter(
@@ -267,7 +314,14 @@ def create_meeting(request):
             if email.strip()
         ]
 
+        auto_record = (
+                request.POST.get("auto_record") == "on"
+        )
+
+        # -----------------------------------------
         # Validate required fields
+        # -----------------------------------------
+
         if (
             not meeting_title
             or not start_time
@@ -279,7 +333,10 @@ def create_meeting(request):
                 status=400
             )
 
+        # -----------------------------------------
         # Convert form datetime values
+        # -----------------------------------------
+
         start_datetime = parse_datetime(
             start_time
         )
@@ -295,7 +352,10 @@ def create_meeting(request):
                 status=400
             )
 
+        # -----------------------------------------
         # Make datetimes timezone-aware
+        # -----------------------------------------
+
         india_timezone = timezone.get_fixed_timezone(
             330
         )
@@ -324,6 +384,7 @@ def create_meeting(request):
         )
 
         event = {
+
             "summary": meeting_title,
 
             "start": {
@@ -337,8 +398,13 @@ def create_meeting(request):
             },
 
             "conferenceData": {
+
                 "createRequest": {
-                    "requestId": str(uuid.uuid4()),
+
+                    "requestId": str(
+                        uuid.uuid4()
+                    ),
+
                     "conferenceSolutionKey": {
                         "type": "hangoutsMeet"
                     },
@@ -346,8 +412,12 @@ def create_meeting(request):
             },
         }
 
+        # -----------------------------------------
         # Add participants if provided
+        # -----------------------------------------
+
         if participant_emails:
+
             event["attendees"] = [
                 {
                     "email": email
@@ -355,7 +425,10 @@ def create_meeting(request):
                 for email in participant_emails
             ]
 
-        # Create Google Calendar event + Meet
+        # -----------------------------------------
+        # Create Calendar event + Meet
+        # -----------------------------------------
+
         created_event = service.events().insert(
             calendarId="primary",
             body=event,
@@ -363,7 +436,10 @@ def create_meeting(request):
             sendUpdates="all",
         ).execute()
 
-        # Extract Google Meet link
+        # -----------------------------------------
+        # Extract Meet link
+        # -----------------------------------------
+
         conference_data = created_event.get(
             "conferenceData",
             {}
@@ -393,34 +469,81 @@ def create_meeting(request):
                 "was not generated yet."
             )
 
+        # -----------------------------------------
         # Extract meeting code
+        # -----------------------------------------
+
         meeting_code = (
             meet_link.rstrip("/")
             .split("/")[-1]
         )
 
         # -----------------------------------------
-        # Save meeting belonging to THIS USER
+        # Get Google Meet space resource
+        # -----------------------------------------
+
+        space_result = get_meeting_space(
+            meeting_code,
+            request.user
+        )
+
+        if not space_result["success"]:
+            return HttpResponse(
+                "Meeting was created, but the Google Meet "
+                "space could not be retrieved: "
+                + space_result.get(
+                    "message",
+                    "Unknown error."
+                ),
+                status=500
+            )
+
+        space_name = space_result["space_name"]
+
+        # -----------------------------------------
+        # Save Meeting
         # -----------------------------------------
 
         meeting = Meeting.objects.create(
-
             user=request.user,
-
             meeting_title=meeting_title,
-
             gmeet_link=meet_link,
-
             meeting_code=meeting_code,
-
+            space_name=space_name,
             start_time=start_datetime,
-
             end_time=end_datetime,
-
+            auto_record=auto_record,
         )
 
         # -----------------------------------------
-        # Save all invited participants
+        # Configure Google Meet auto recording
+        # -----------------------------------------
+
+        if auto_record:
+
+            recording_result = set_auto_recording(
+                meeting,
+                request.user,
+                enabled=True
+            )
+
+            if not recording_result["success"]:
+                # Remove the local meeting record because
+                # the requested recording configuration failed.
+                meeting.delete()
+
+                return HttpResponse(
+                    "Meeting was created, but automatic recording "
+                    "could not be enabled: "
+                    + recording_result.get(
+                        "message",
+                        "Unknown error."
+                    ),
+                    status=500
+                )
+
+        # -----------------------------------------
+        # Save invited participants
         # -----------------------------------------
 
         for email in participant_emails:
@@ -444,6 +567,9 @@ def create_meeting(request):
     )
 
 
+# =========================================================
+# MEETING LIST
+# =========================================================
 
 def meeting_list(request):
 
@@ -458,7 +584,7 @@ def meeting_list(request):
         )
 
     # ---------------------------------------------
-    # Make sure THIS user has Google credentials
+    # Make sure this user has Google credentials
     # ---------------------------------------------
 
     if not GoogleCredentials.objects.filter(
@@ -470,46 +596,21 @@ def meeting_list(request):
         )
 
     # ---------------------------------------------
-    # ONLY show THIS user's meetings
+    # ONLY show this user's meetings
     # ---------------------------------------------
 
-    meetings = Meeting.objects.filter(
-        user=request.user
-    ).order_by(
-        "-start_time"
+    meetings = (
+        Meeting.objects
+        .filter(
+            user=request.user
+        )
+        .prefetch_related(
+            "conferences__recordings"
+        )
+        .order_by(
+            "-start_time"
+        )
     )
-
-    # ---------------------------------------------
-    # Check for recordings
-    # ---------------------------------------------
-
-    for meeting in meetings:
-
-        # Only search Google Drive if we haven't
-        # already saved the recording URL
-
-        if not meeting.recording_url:
-
-            try:
-
-                result = get_meeting_recording(
-                    meeting.id,
-                    request.user
-                )
-
-                print(
-                    "RECORDING CHECK:",
-                    meeting.meeting_title,
-                    result
-                )
-
-            except Exception as e:
-
-                print(
-                    "RECORDING CHECK ERROR:",
-                    meeting.meeting_title,
-                    e
-                )
 
     return render(
         request,
@@ -519,7 +620,9 @@ def meeting_list(request):
         }
     )
 
-
+# =========================================================
+# MEETING PARTICIPANTS
+# =========================================================
 
 def meeting_participants(
     request,
@@ -554,9 +657,15 @@ def meeting_participants(
 
     try:
 
-        meeting = Meeting.objects.get(
-            id=meeting_id,
-            user=request.user
+        meeting = (
+            Meeting.objects
+            .prefetch_related(
+                "conferences__participants__sessions"
+            )
+            .get(
+                id=meeting_id,
+                user=request.user
+            )
         )
 
     except Meeting.DoesNotExist:
@@ -575,13 +684,17 @@ def meeting_participants(
     )
 
     # ---------------------------------------------
-    # Participants who actually joined
+    # Conferences belonging to this meeting
     # ---------------------------------------------
 
-    joined_participants = (
-        meeting.participants
-        .prefetch_related("sessions")
-        .all()
+    conferences = (
+        meeting.conferences
+        .prefetch_related(
+            "participants__sessions"
+        )
+        .order_by(
+            "start_time"
+        )
     )
 
     return render(
@@ -590,12 +703,19 @@ def meeting_participants(
         {
             "meeting": meeting,
             "invited_participants": invited_participants,
-            "joined_participants": joined_participants,
+            "conferences": conferences,
         }
     )
 
 
-def sync_attendance(request, meeting_id):
+# =========================================================
+# SYNC ATTENDANCE
+# =========================================================
+
+def sync_attendance(
+    request,
+    meeting_id
+):
 
     # ---------------------------------------------
     # Make sure user is logged in
@@ -626,7 +746,7 @@ def sync_attendance(request, meeting_id):
         )
 
     # ---------------------------------------------
-    # Synchronize attendance from Google Meet
+    # Synchronize attendance
     # ---------------------------------------------
 
     result = sync_meeting_attendance(
@@ -650,6 +770,10 @@ def sync_attendance(request, meeting_id):
         meeting_id=meeting.id
     )
 
+
+# =========================================================
+# TEST MEETING RECORDINGS
+# =========================================================
 
 def test_meeting_recording(
     request,
@@ -685,7 +809,7 @@ def test_meeting_recording(
         )
 
     # ---------------------------------------------
-    # Get recording from Google Meet
+    # Get recordings
     # ---------------------------------------------
 
     result = get_meeting_recording(
@@ -693,31 +817,102 @@ def test_meeting_recording(
         request.user
     )
 
-    if result["success"]:
+    if not result["success"]:
 
         return HttpResponse(
             f"""
-            <h2>Recording Found</h2>
+            <h2>Recording Test</h2>
 
             <p>{result["message"]}</p>
-
-            <p>
-                <strong>Recording URL:</strong>
-                <a
-                    href="{result["recording_url"]}"
-                    target="_blank"
-                >
-                    Open Recording
-                </a>
-            </p>
-            """
+            """,
+            status=404
         )
+
+    # ---------------------------------------------
+    # Display all recordings
+    # ---------------------------------------------
+
+    recordings_html = ""
+
+    for recording in result.get(
+        "recordings",
+        []
+    ):
+
+        recording_url = recording.get(
+            "recording_url"
+        )
+
+        if recording_url:
+
+            recordings_html += f"""
+                <li>
+                    <strong>
+                        Conference:
+                    </strong>
+                    {recording["conference_id"]}
+
+                    <br>
+
+                    <strong>
+                        Recording:
+                    </strong>
+
+                    <a
+                        href="{recording_url}"
+                        target="_blank"
+                    >
+                        Open Recording
+                    </a>
+
+                    <br>
+
+                    <strong>
+                        Start:
+                    </strong>
+                    {recording["start_time"]}
+
+                    <br>
+
+                    <strong>
+                        End:
+                    </strong>
+                    {recording["end_time"]}
+                </li>
+
+                <br>
+            """
+
+        else:
+
+            recordings_html += f"""
+                <li>
+                    Conference:
+                    {recording["conference_id"]}
+
+                    <br>
+
+                    Recording URL is not available.
+                </li>
+
+                <br>
+            """
 
     return HttpResponse(
         f"""
-        <h2>Recording Test</h2>
+        <h2>Recordings Found</h2>
 
-        <p>{result["message"]}</p>
-        """,
-        status=404
+        <p>
+            {result["message"]}
+        </p>
+
+        <p>
+            Total recordings:
+            {len(result.get("recordings", []))}
+        </p>
+
+        <ul>
+            {recordings_html}
+        </ul>
+        """
     )

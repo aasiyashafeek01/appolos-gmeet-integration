@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class GoogleCredentials(models.Model):
+
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -12,13 +14,19 @@ class GoogleCredentials(models.Model):
 
     access_token = models.TextField()
     refresh_token = models.TextField()
+
     token_expiry = models.DateTimeField(
         null=True,
         blank=True
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
 
     def __str__(self):
         return f"Google Credentials - {self.user.username}"
@@ -34,7 +42,9 @@ class Meeting(models.Model):
         blank=True
     )
 
-    meeting_title = models.CharField(max_length=255)
+    meeting_title = models.CharField(
+        max_length=255
+    )
 
     gmeet_link = models.URLField()
 
@@ -43,6 +53,21 @@ class Meeting(models.Model):
         max_length=50,
         blank=True,
         null=True
+    )
+
+    # Google Meet space resource
+    space_name = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+
+    # ---------------------------------------------
+    # AUTO RECORDING
+    # ---------------------------------------------
+
+    auto_record = models.BooleanField(
+        default=False
     )
 
     # -------------------------------------------------
@@ -61,45 +86,58 @@ class Meeting(models.Model):
         blank=True
     )
 
-    # -------------------------------------------------
-    # ACTUAL GOOGLE MEET CONFERENCE TIME
-    # -------------------------------------------------
-
-    actual_start_time = models.DateTimeField(
-        null=True,
-        blank=True
+    created_at = models.DateTimeField(
+        auto_now_add=True
     )
 
-    actual_end_time = models.DateTimeField(
-        null=True,
-        blank=True
-    )
+    def save(self, *args, **kwargs):
 
-    actual_duration = models.DurationField(
-        null=True,
-        blank=True
-    )
+        if self.start_time and self.end_time:
+            self.duration = (
+                self.end_time - self.start_time
+            )
 
-    # -------------------------------------------------
-    # PARTICIPANT / RECORDING INFORMATION
-    # -------------------------------------------------
+        super().save(*args, **kwargs)
 
-    participant_email = models.EmailField(
-        blank=True,
-        null=True
+    def __str__(self):
+        return self.meeting_title
+
+
+class Conference(models.Model):
+
+    meeting = models.ForeignKey(
+        Meeting,
+        on_delete=models.CASCADE,
+        related_name="conferences"
     )
 
     # Google Meet conference record
     conference_record = models.CharField(
         max_length=255,
+        unique=True
+    )
+
+    # Google Meet space
+    space = models.CharField(
+        max_length=255,
         blank=True,
         null=True
     )
 
-    # Google Drive playback URL for recording
-    recording_url = models.URLField(
-        blank=True,
-        null=True
+    # -------------------------------------------------
+    # ACTUAL CONFERENCE TIME
+    # -------------------------------------------------
+
+    start_time = models.DateTimeField()
+
+    end_time = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    duration = models.DurationField(
+        null=True,
+        blank=True
     )
 
     created_at = models.DateTimeField(
@@ -108,20 +146,19 @@ class Meeting(models.Model):
 
     def save(self, *args, **kwargs):
 
-        # Scheduled duration
         if self.start_time and self.end_time:
-            self.duration = self.end_time - self.start_time
-
-        # Actual Meet duration
-        if self.actual_start_time and self.actual_end_time:
-            self.actual_duration = (
-                self.actual_end_time - self.actual_start_time
+            self.duration = (
+                self.end_time - self.start_time
             )
 
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.meeting_title
+        return (
+            f"{self.meeting.meeting_title} - "
+            f"{self.start_time}"
+        )
+
 
 class MeetingParticipant(models.Model):
 
@@ -136,10 +173,11 @@ class MeetingParticipant(models.Model):
     def __str__(self):
         return self.email
 
+
 class ParticipantAttendance(models.Model):
 
-    meeting = models.ForeignKey(
-        Meeting,
+    conference = models.ForeignKey(
+        Conference,
         on_delete=models.CASCADE,
         related_name="participants"
     )
@@ -155,6 +193,7 @@ class ParticipantAttendance(models.Model):
         null=True
     )
 
+    # Google signed-in user ID
     google_user = models.CharField(
         max_length=255,
         blank=True,
@@ -180,7 +219,7 @@ class ParticipantAttendance(models.Model):
         blank=True
     )
 
-    # Sum of all participant sessions
+    # Total attendance across sessions
     total_duration = models.DurationField(
         null=True,
         blank=True
@@ -204,9 +243,8 @@ class ParticipantSession(models.Model):
 
     # Google Meet participant session resource
     session_resource = models.CharField(
-        max_length=500,
-        blank=True,
-        null=True
+        max_length=255,
+        unique=True
     )
 
     joined_at = models.DateTimeField()
@@ -224,10 +262,59 @@ class ParticipantSession(models.Model):
     def save(self, *args, **kwargs):
 
         if self.joined_at and self.left_at:
-            self.duration = self.left_at - self.joined_at
+            self.duration = (
+                self.left_at - self.joined_at
+            )
 
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.joined_at} - {self.left_at}"
 
+
+class ConferenceRecording(models.Model):
+
+    conference = models.ForeignKey(
+        Conference,
+        on_delete=models.CASCADE,
+        related_name="recordings"
+    )
+
+    # Google Meet recording resource
+    recording_resource = models.CharField(
+        max_length=255,
+        unique=True
+    )
+
+    start_time = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    end_time = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    # Google Drive file ID
+    drive_file_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+
+    # Google Drive playback URL
+    recording_url = models.URLField(
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return (
+            f"Recording - "
+            f"{self.conference}"
+        )

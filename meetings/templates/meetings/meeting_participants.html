@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>Meeting & Participant Details</title>
+    <title>Meeting & Conference Details</title>
 
     <style>
 
@@ -16,6 +16,10 @@
             background: #f5f7fb;
             color: #1f2937;
         }
+
+        /* =========================
+           NAVBAR
+           ========================= */
 
         .navbar {
             background: #ffffff;
@@ -41,11 +45,21 @@
             color: #2563eb;
         }
 
+
+        /* =========================
+           CONTAINER
+           ========================= */
+
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 45px auto;
             padding: 0 20px;
         }
+
+
+        /* =========================
+           BACK LINK
+           ========================= */
 
         .back-link {
             display: inline-block;
@@ -54,6 +68,11 @@
             color: #2563eb;
             font-weight: 600;
         }
+
+
+        /* =========================
+           PAGE HEADER
+           ========================= */
 
         .page-header {
             margin-bottom: 30px;
@@ -100,7 +119,7 @@
 
 
         /* =========================
-           MEETING DETAILS
+           MEETING INFORMATION
            ========================= */
 
         .meeting-details-card {
@@ -133,20 +152,6 @@
 
         .info-item span {
             font-size: 14px;
-        }
-
-        .actual-duration {
-            background: #f0fdf4;
-            border-color: #bbf7d0;
-        }
-
-        .actual-duration strong {
-            color: #166534;
-        }
-
-        .actual-duration span {
-            font-weight: 600;
-            color: #166534;
         }
 
 
@@ -182,29 +187,179 @@
 
 
         /* =========================
-           JOINED PARTICIPANT CARD
+           CONFERENCE
+           ========================= */
+
+        .conference-card {
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .conference-header {
+            padding: 20px 22px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .conference-title {
+            margin: 0 0 6px;
+            font-size: 18px;
+        }
+
+        .conference-record {
+            margin: 0;
+            font-size: 12px;
+            color: #9ca3af;
+            word-break: break-word;
+        }
+
+
+        /* =========================
+           CONFERENCE INFORMATION
+           ========================= */
+
+        .conference-info {
+            padding: 20px 22px;
+        }
+
+        .conference-info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .conference-info-item {
+            background: #fffdf5;
+            border: 1px solid #d6ceb0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .conference-info-item strong {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        .conference-info-item span {
+            font-size: 14px;
+        }
+
+        .conference-duration {
+            background: #f0fdf4;
+            border-color: #bbf7d0;
+        }
+
+        .conference-duration strong {
+            color: #166534;
+        }
+
+        .conference-duration span {
+            font-weight: 600;
+            color: #166534;
+        }
+
+
+        /* =========================
+           RECORDING
+           ========================= */
+
+        .recording-section {
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .recording-label {
+            display: block;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .recording-button {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #f0fdf4;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            border-radius: 7px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .recording-button:hover {
+            background: #dcfce7;
+            border-color: #86efac;
+        }
+
+        .no-recording {
+            margin: 0;
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+
+        /* =========================
+           PARTICIPANTS SECTION
+           ========================= */
+
+        .conference-participants {
+            padding: 0 22px 22px;
+        }
+
+        .participants-title {
+            margin: 0 0 15px;
+            font-size: 17px;
+        }
+
+
+        /* =========================
+           PARTICIPANT CARD
            ========================= */
 
         .participant-card {
             background: white;
             border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            margin-bottom: 12px;
             overflow: hidden;
+        }
+
+        .participant-card:last-child {
+            margin-bottom: 0;
         }
 
         .participant-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 22px;
+            gap: 15px;
+            padding: 16px 18px;
+        }
+
+        .participant-heading {
+            min-width: 0;
         }
 
         .participant-name {
-            margin: 0;
-            font-size: 16px;
+            margin: 0 0 4px;
+            font-size: 15px;
             font-weight: 600;
+            word-break: break-word;
+        }
+
+        .participant-email {
+            margin: 0;
+            font-size: 13px;
+            color: #6b7280;
             word-break: break-word;
         }
 
@@ -231,15 +386,15 @@
            ========================= */
 
         .participant-content {
-            padding: 20px 22px 22px;
-            border-top: 1px solid #cbd5e1;
+            padding: 18px;
+            border-top: 1px solid #e5e7eb;
         }
 
         .participant-info {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
 
@@ -288,6 +443,11 @@
             border-top: 1px solid #cbd5e1;
         }
 
+
+        /* =========================
+           SESSION
+           ========================= */
+
         .session {
             background: white;
             border: 1px solid #cbd5e1;
@@ -325,6 +485,20 @@
 
 
         /* =========================
+           EMPTY CONFERENCE
+           ========================= */
+
+        .empty-conference {
+            padding: 20px;
+            color: #6b7280;
+            background: #f9fafb;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+
+        /* =========================
            EMPTY STATE
            ========================= */
 
@@ -355,10 +529,8 @@
                 margin-left: 10px;
             }
 
-            .meeting-info-grid {
-                grid-template-columns: 1fr;
-            }
-
+            .meeting-info-grid,
+            .conference-info-grid,
             .participant-info {
                 grid-template-columns: 1fr;
             }
@@ -369,7 +541,7 @@
             }
 
             .participant-header {
-                gap: 15px;
+                align-items: flex-start;
             }
 
         }
@@ -380,6 +552,7 @@
 
 
 <body>
+
 
 <nav class="navbar">
 
@@ -404,6 +577,11 @@
 
 <div class="container">
 
+
+    <!-- =========================
+         BACK
+         ========================= -->
+
     <a
         href="{% url 'meeting-list' %}"
         class="back-link"
@@ -412,6 +590,10 @@
     </a>
 
 
+    <!-- =========================
+         PAGE HEADER
+         ========================= -->
+
     <div class="page-header">
 
         <h1>
@@ -419,7 +601,7 @@
         </h1>
 
         <p>
-            Attendance and session information for
+            Attendance and conference information for
             <strong>{{ meeting.meeting_title }}</strong>
         </p>
 
@@ -434,7 +616,7 @@
 
 
     <!-- =========================================
-         MEETING DETAILS
+         CALENDAR / MEETING DETAILS
          ========================================= -->
 
     <div class="section">
@@ -446,6 +628,22 @@
         <div class="meeting-details-card">
 
             <div class="meeting-info-grid">
+
+
+                <!-- Meeting Title -->
+
+                <div class="info-item">
+
+                    <strong>
+                        Meeting
+                    </strong>
+
+                    <span>
+                        {{ meeting.meeting_title }}
+                    </span>
+
+                </div>
+
 
                 <!-- Scheduled Start -->
 
@@ -492,46 +690,31 @@
                 </div>
 
 
-                <!-- Actual Meet Start -->
+                <!-- Meet Link -->
 
                 <div class="info-item">
 
                     <strong>
-                        Actual Meet Start
+                        Google Meet Link
                     </strong>
 
                     <span>
-                        {{ meeting.actual_start_time|default:"Not available" }}
+                        {{ meeting.gmeet_link }}
                     </span>
 
                 </div>
 
 
-                <!-- Actual Meet End -->
+                <!-- Meeting Code -->
 
                 <div class="info-item">
 
                     <strong>
-                        Actual Meet End
+                        Meeting Code
                     </strong>
 
                     <span>
-                        {{ meeting.actual_end_time|default:"Not available" }}
-                    </span>
-
-                </div>
-
-
-                <!-- Actual Meet Duration -->
-
-                <div class="info-item actual-duration">
-
-                    <strong>
-                        Actual Meet Duration
-                    </strong>
-
-                    <span>
-                        {{ meeting.actual_duration|default:"Not available" }}
+                        {{ meeting.meeting_code|default:"Not available" }}
                     </span>
 
                 </div>
@@ -583,96 +766,90 @@
 
 
     <!-- =========================================
-         JOINED PARTICIPANTS
+         CONFERENCES
          ========================================= -->
 
     <div class="section">
 
         <h2 class="section-title">
-            Joined Participants
+            Conferences
         </h2>
 
 
-        {% if joined_participants %}
+        {% if conferences %}
 
-            {% for participant in joined_participants %}
 
-                <div class="participant-card">
+            {% for conference in conferences %}
 
-                    <!-- Participant email -->
+                <div class="conference-card">
 
-                    <div class="participant-header">
 
-                         <h3 class="participant-name">
-                            {{ participant.participant_name|default:"Unknown Participant" }}
+                    <!-- =========================
+                         CONFERENCE HEADER
+                         ========================= -->
+
+                    <div class="conference-header">
+
+                        <h3 class="conference-title">
+                            Conference {{ forloop.counter }}
                         </h3>
 
-                        <div class="participant-email">
-                            {{ participant.participant_email|default:"Email not available" }}
-                        </div>
-
-
-                        <button
-                            type="button"
-                            class="details-button"
-                            onclick="toggleParticipant(this)"
-                        >
-                            View Details
-                        </button>
+                        <p class="conference-record">
+                            {{ conference.conference_record }}
+                        </p>
 
                     </div>
 
 
-                    <!-- Hidden details -->
+                    <!-- =========================
+                         CONFERENCE INFORMATION
+                         ========================= -->
 
-                    <div
-                        class="participant-content"
-                        style="display: none;"
-                    >
+                    <div class="conference-info">
 
-                        <div class="participant-info">
+                        <div class="conference-info-grid">
 
 
-                            <!-- First Joined -->
+                            <!-- Start -->
 
-                            <div class="info-item">
+                            <div class="conference-info-item">
 
                                 <strong>
-                                    First Joined
+                                    Start
                                 </strong>
 
                                 <span>
-                                    {{ participant.first_joined|default:"Not available" }}
+                                    {{ conference.start_time|default:"Not available" }}
                                 </span>
 
                             </div>
 
 
-                            <!-- Last Left -->
+                            <!-- End -->
 
-                            <div class="info-item">
+                            <div class="conference-info-item">
 
                                 <strong>
-                                    Last Left
+                                    End
                                 </strong>
 
                                 <span>
-                                    {{ participant.last_left|default:"Not available" }}
+                                    {{ conference.end_time|default:"Not available" }}
                                 </span>
 
                             </div>
 
 
-                            <!-- Total Duration -->
+                            <!-- Duration -->
 
-                            <div class="info-item">
+                            <div class="conference-info-item conference-duration">
 
                                 <strong>
-                                    Total Duration
+                                    Duration
                                 </strong>
 
                                 <span>
-                                    {{ participant.total_duration|default:"Not available" }}
+                                    {{ conference.duration|default:"Not available" }}
                                 </span>
 
                             </div>
@@ -680,82 +857,284 @@
                         </div>
 
 
-                        <!-- Sessions -->
+                        <!-- =========================
+                             CONFERENCE RECORDING
+                             ========================= -->
 
-                        <details class="sessions-details">
+                        <div class="recording-section">
 
-                            <summary class="sessions-summary">
-                                Sessions
-                            </summary>
-
-
-                            <div class="sessions-content">
-
-                                {% if participant.sessions.all %}
-
-                                    {% for session in participant.sessions.all %}
-
-                                        <div class="session">
-
-                                            <div class="session-row">
+                            <span class="recording-label">
+                                Conference Recording
+                            </span>
 
 
-                                                <div class="session-item">
+                            {% if conference.recordings.all %}
 
-                                                    <strong>
-                                                        Joined
-                                                    </strong>
+                                {% for recording in conference.recordings.all %}
 
-                                                    <span>
-                                                        {{ session.joined_at }}
-                                                    </span>
+                                    {% if recording.recording_url %}
 
-                                                </div>
+                                        <a
+                                            href="{{ recording.recording_url }}"
+                                            target="_blank"
+                                            class="recording-button"
+                                        >
+                                            ▶ View Recording
+                                        </a>
+
+                                    {% else %}
+
+                                        <p class="no-recording">
+                                            Recording exists, but no recording URL is available.
+                                        </p>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <p class="no-recording">
+                                    No recording available for this conference.
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
 
 
-                                                <div class="session-item">
+                    <!-- =========================
+                         CONFERENCE PARTICIPANTS
+                         ========================= -->
 
-                                                    <strong>
-                                                        Left
-                                                    </strong>
+                    <div class="conference-participants">
 
-                                                    <span>
-                                                        {{ session.left_at|default:"Still active" }}
-                                                    </span>
-
-                                                </div>
+                        <h4 class="participants-title">
+                            Participants
+                        </h4>
 
 
-                                                <div class="session-item">
+                        {% if conference.participants.all %}
 
-                                                    <strong>
-                                                        Duration
-                                                    </strong>
 
-                                                    <span>
-                                                        {{ session.duration|default:"Not available" }}
-                                                    </span>
+                            {% for participant in conference.participants.all %}
 
-                                                </div>
+                                <div class="participant-card">
 
+
+                                    <!-- PARTICIPANT HEADER -->
+
+                                    <div class="participant-header">
+
+                                        <div class="participant-heading">
+
+                                            <h5 class="participant-name">
+                                                {{ participant.participant_name|default:"Unknown Participant" }}
+                                            </h5>
+
+                                            <p class="participant-email">
+
+                                                {% if participant.participant_email %}
+
+                                                    {{ participant.participant_email }}
+
+                                                {% else %}
+
+                                                    Email not available
+
+                                                {% endif %}
+
+                                            </p>
+
+                                        </div>
+
+
+                                        <button
+                                            type="button"
+                                            class="details-button"
+                                            onclick="toggleParticipant(this)"
+                                        >
+                                            View Details
+                                        </button>
+
+                                    </div>
+
+
+                                    <!-- PARTICIPANT DETAILS -->
+
+                                    <div
+                                        class="participant-content"
+                                        style="display: none;"
+                                    >
+
+
+                                        <div class="participant-info">
+
+
+                                            <!-- First Joined -->
+
+                                            <div class="info-item">
+
+                                                <strong>
+                                                    First Joined
+                                                </strong>
+
+                                                <span>
+                                                    {{ participant.first_joined|default:"Not available" }}
+                                                </span>
+
+                                            </div>
+
+
+                                            <!-- Last Left -->
+
+                                            <div class="info-item">
+
+                                                <strong>
+                                                    Last Left
+                                                </strong>
+
+                                                <span>
+                                                    {{ participant.last_left|default:"Not available" }}
+                                                </span>
+
+                                            </div>
+
+
+                                            <!-- Total Duration -->
+
+                                            <div class="info-item actual-duration">
+
+                                                <strong>
+                                                    Total Duration
+                                                </strong>
+
+                                                <span>
+                                                    {{ participant.total_duration|default:"Not available" }}
+                                                </span>
 
                                             </div>
 
                                         </div>
 
-                                    {% endfor %}
 
-                                {% else %}
+                                        <!-- =========================
+                                             PARTICIPANT SESSIONS
+                                             ========================= -->
 
-                                    <p class="empty-session">
-                                        No session information available.
-                                    </p>
+                                        <details class="sessions-details">
 
-                                {% endif %}
+                                            <summary class="sessions-summary">
+                                                Sessions
+                                            </summary>
+
+
+                                            <div class="sessions-content">
+
+
+                                                {% if participant.sessions.all %}
+
+
+                                                    {% for session in participant.sessions.all %}
+
+                                                        <div class="session">
+
+                                                            <div class="session-row">
+
+
+                                                                <!-- Joined -->
+
+                                                                <div class="session-item">
+
+                                                                    <strong>
+                                                                        Joined
+                                                                    </strong>
+
+                                                                    <span>
+                                                                        {{ session.joined_at|default:"Not available" }}
+                                                                    </span>
+
+                                                                </div>
+
+
+                                                                <!-- Left -->
+
+                                                                <div class="session-item">
+
+                                                                    <strong>
+                                                                        Left
+                                                                    </strong>
+
+                                                                    <span>
+
+                                                                        {% if session.left_at %}
+
+                                                                            {{ session.left_at }}
+
+                                                                        {% else %}
+
+                                                                            Still active
+
+                                                                        {% endif %}
+
+                                                                    </span>
+
+                                                                </div>
+
+
+                                                                <!-- Duration -->
+
+                                                                <div class="session-item">
+
+                                                                    <strong>
+                                                                        Duration
+                                                                    </strong>
+
+                                                                    <span>
+                                                                        {{ session.duration|default:"Not available" }}
+                                                                    </span>
+
+                                                                </div>
+
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    {% endfor %}
+
+
+                                                {% else %}
+
+                                                    <p class="empty-session">
+                                                        No session information available.
+                                                    </p>
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        </details>
+
+                                    </div>
+
+                                </div>
+
+                            {% endfor %}
+
+
+                        {% else %}
+
+                            <div class="empty-conference">
+
+                                No participants were found for this conference.
 
                             </div>
 
-                        </details>
+                        {% endif %}
+
 
                     </div>
 
@@ -766,22 +1145,25 @@
 
         {% else %}
 
+
             <div class="empty-state">
 
                 <h2>
-                    No Joined Participants Yet
+                    No Conferences Yet
                 </h2>
 
                 <p>
-                    Attendance information has not been synchronized
-                    for this meeting yet.
+                    Attendance has not been synchronized for this meeting yet.
+                    Click "Sync Attendance" to retrieve the Google Meet conference records.
                 </p>
 
             </div>
 
+
         {% endif %}
 
     </div>
+
 
 </div>
 

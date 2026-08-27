@@ -15,7 +15,9 @@ SCOPES = [
     "https://www.googleapis.com/auth/calendar.events",
     "https://www.googleapis.com/auth/meetings.space.settings",
     "https://www.googleapis.com/auth/meetings.space.readonly",
+    "https://www.googleapis.com/auth/meetings.space.settings",
     "https://www.googleapis.com/auth/drive.meet.readonly",
+    "https://www.googleapis.com/auth/user.emails.read",
 ]
 
 
